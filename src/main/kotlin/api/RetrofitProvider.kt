@@ -1,8 +1,10 @@
 package api
 
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitProvider private constructor() {
     companion object {
@@ -18,6 +20,12 @@ class RetrofitProvider private constructor() {
         }
     }
 
+    private val gson by lazy {
+        GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .create()
+    }
+
     private val client by lazy {
         val interceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BASIC)
@@ -30,6 +38,7 @@ class RetrofitProvider private constructor() {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 

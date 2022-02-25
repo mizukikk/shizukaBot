@@ -1,5 +1,7 @@
 package repository
 
+import api.ResponseCallBack
+import api.model.EventInfo
 import repository.remote.MLTDDataSource
 import repository.remote.MLTDRemoteDataSource
 
@@ -18,4 +20,7 @@ class MLTDRepository(private val remoteDataSource: MLTDRemoteDataSource) : MLTDR
         }
     }
 
+    override fun getEventInfoList(callBack: ResponseCallBack<List<EventInfo>>) {
+        remoteDataSource.getEventInfoList(callBack)
+    }
 }

@@ -1,6 +1,9 @@
 package repository.remote
 
+import api.ApiCallBack
+import api.ResponseCallBack
 import api.RetrofitProvider
+import api.model.EventInfo
 import api.service.MLTDService
 
 class MLTDDataSource : MLTDRemoteDataSource {
@@ -19,4 +22,17 @@ class MLTDDataSource : MLTDRemoteDataSource {
     private val mltdService = RetrofitProvider
         .getInstance()
         .createService(MLTDService::class.java)
+
+    override fun getEventInfoList(callBack: ResponseCallBack<List<EventInfo>>) {
+        val call = mltdService.getEventInfoList()
+        call.enqueue(object :ApiCallBack<List<EventInfo>>(){
+            override fun success(response: List<EventInfo>) {
+                callBack.success(response)
+            }
+
+            override fun fail() {
+                callBack.fail()
+            }
+        })
+    }
 }
