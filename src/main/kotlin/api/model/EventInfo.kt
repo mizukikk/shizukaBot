@@ -28,14 +28,14 @@ data class EventInfo(
         const val TOUR = 4 //: プラチナスターツアー
         const val ANNIVERSARY = 5 //: 周年記念イベント
         const val WORKING = 6 //: MILLION LIVE WORKING☆
-        const val april_fool = 7 //: エイプリルフール
+        const val APRIL_FOOL = 7 //: エイプリルフール
         const val COLLECTION_BOX = 9 //: ミリコレ！（ボックスガシャ）
         const val TWIN = 10// : ツインステージ
         const val TUNE = 11// : プラチナスターチューン
         const val TWIN_2 = 12// : ツインステージ 2
-        const val tail = 13// : プラチナスターテール
+        const val TAIL = 13// : プラチナスターテール
         const val TALK = 14// : THEATER TALK PARTY☆
-        const val treasure = 16// : プラチナスタートレジャー
+        const val TREASURE = 16// : プラチナスタートレジャー
     }
 
     val isAnniversaryEvent get() = type == ANNIVERSARY
