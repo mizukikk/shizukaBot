@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 data class EventInfo(
     @Expose
     @SerializedName("appealType")
-    val appealType: Int,
+    val appealType: Int?,
     @Expose
     @SerializedName("id")
     val id: Int,

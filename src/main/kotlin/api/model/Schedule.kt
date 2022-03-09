@@ -10,10 +10,10 @@ data class Schedule(
     val beginDate: String,
     @Expose
     @SerializedName("boostBeginDate")
-    val boostBeginDate: String,
+    val boostBeginDate: String?,
     @Expose
     @SerializedName("boostEndDate")
-    val boostEndDate: String,
+    val boostEndDate: String?,
     @Expose
     @SerializedName("endDate")
     val endDate: String,
