@@ -33,7 +33,6 @@ class DiscordBot private constructor() {
         if (jda?.status == JDA.Status.CONNECTED)
             return
         Logger.log("bot connect")
-        Logger.log(jda?.status?.name)
         jda = JDABuilder.createDefault(token)
             .addEventListeners(object : ListenerAdapter() {
                 //取得訊息

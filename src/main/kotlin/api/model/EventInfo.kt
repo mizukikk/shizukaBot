@@ -3,6 +3,9 @@ package api.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import extension.dateToMillis
+import extension.millisToDate
+import java.lang.StringBuilder
 
 data class EventInfo(
     @Expose
@@ -39,4 +42,18 @@ data class EventInfo(
     }
 
     val isAnniversaryEvent get() = type == ANNIVERSARY
+    val eventDate
+        get() :String {
+            val sb = StringBuilder()
+            sb.append("活動時間:")
+            sb.append("\n開始：")
+            sb.append(schedule.beginDate.dateToMillis().millisToDate("yyyy-MM-dd HH:mm XXX"))
+            schedule.boostBeginDate?.let { beginDate ->
+                sb.append("\n後半：")
+                sb.append(beginDate.dateToMillis().millisToDate("yyyy-MM-dd HH:mm XXX"))
+            }
+            sb.append("\n結束：")
+            sb.append(schedule.endDate.dateToMillis().millisToDate("yyyy-MM-dd HH:mm XXX"))
+            return sb.toString()
+        }
 }
