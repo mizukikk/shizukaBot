@@ -29,9 +29,9 @@ class DiscordBot private constructor() {
 
     private var jda: JDA? = null
 
-    fun connect(): DiscordBot {
+    fun connect() {
         if (jda?.status == JDA.Status.CONNECTED)
-            return this
+            return
         Logger.log("bot connect")
         Logger.log(jda?.status?.name)
         jda = JDABuilder.createDefault(token)
@@ -44,7 +44,6 @@ class DiscordBot private constructor() {
             .build()
             .awaitReady()
         Logger.log("bot start")
-        return this
     }
 
     fun getServiceList() = jda?.guilds
