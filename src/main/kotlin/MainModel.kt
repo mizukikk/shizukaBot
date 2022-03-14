@@ -6,11 +6,15 @@ import api.model.Score
 import api.parameter.GetAnivIdolEventLogsParameter
 import api.parameter.GetEventLogsParameter
 import bot.DiscordBot
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import data.Idol
 import extension.dateToMillis
 import extension.millisToDate
 import extension.nextUpdateMillis
 import net.dv8tion.jda.api.EmbedBuilder
 import repository.MLTDRepository
+import java.io.File
 import java.text.NumberFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -18,6 +22,11 @@ import java.util.concurrent.TimeUnit
 class MainModel {
     private val repository = MLTDRepository.getInstance()
     private val bot: DiscordBot = DiscordBot.getInstance()
+    private val idolMap by lazy {
+        val json = File("idloList.txt")
+            .readText()
+        Gson().fromJson<Map<Int, Idol>>(json, object : TypeToken<Map<Int, Idol>>() {}.type)
+    }
     private var currentEventInfo: EventInfo? = null
     private val timer = Timer()
     private var idolId = 1
