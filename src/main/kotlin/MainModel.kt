@@ -96,7 +96,6 @@ class MainModel {
     private fun getBaseLogEmbedBuilder() = EmbedBuilder()
         .setTitle(currentEventInfo?.name)
         .setDescription(currentEventInfo?.eventDate)
-        .setFooter("資料更新時間 ${System.currentTimeMillis().millisToDate("yyyy-MM-dd HH:mm XXX")}")
 
     private fun setEventLogsMessage(
         eventLogList: List<EventLog>,
@@ -113,6 +112,12 @@ class MainModel {
 
             if (currentScore == null)
                 return@forEach
+
+            val updateTime = currentScore.summaryTime
+                .dateToMillis()
+                .millisToDate("yyyy-MM-dd HH:mm XXX")
+
+            embedBuilder.setFooter("資料更新時間 $updateTime")
 
             var halfHourScore: Score? = null
             var oneHourScore: Score? = null
