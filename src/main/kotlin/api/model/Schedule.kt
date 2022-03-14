@@ -3,6 +3,7 @@ package api.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import extension.dateToMillis
 
 data class Schedule(
     @Expose
@@ -23,4 +24,6 @@ data class Schedule(
     @Expose
     @SerializedName("pageEndDate")
     val pageEndDate: String
-)
+) {
+    val endDateMillis get() = endDate.dateToMillis()
+}
