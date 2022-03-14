@@ -54,7 +54,7 @@ class MLTDDataSource : MLTDRemoteDataSource {
     }
 
     override fun getEventLogs(para: GetEventLogsParameter, callBack: ResponseCallBack<List<EventLog>>) {
-        val call = mltdService.getEventLogs(para.id, para.type.name, para.ranks, para.timeMin)
+        val call = mltdService.getEventLogs(para.id, para.type.value, para.ranks, para.timeMin)
         call.enqueue(object : ApiCallBack<List<EventLog>>() {
             override fun success(response: List<EventLog>) {
                 callBack.success(response)
