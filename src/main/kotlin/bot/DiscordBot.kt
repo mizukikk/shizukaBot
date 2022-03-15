@@ -1,5 +1,7 @@
 package bot
 
+import com.google.gson.Gson
+import data.Token
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -34,8 +36,9 @@ class DiscordBot private constructor() {
 
     private val token by lazy {
         try {
-            File("shizuka_bot_file/botConfig.txt")
-                .readText().replace("\n", "")
+            val json = File("shizuka_bot_file/botConfig.txt")
+                .readText()
+            Gson().fromJson<Token>(json,Token::class.java).token
         } catch (e: Exception) {
             val file = File("shizuka_bot_file")
             if (file.exists().not())
