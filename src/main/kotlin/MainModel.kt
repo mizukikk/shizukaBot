@@ -190,7 +190,7 @@ class MainModel {
 
     private fun getAnnivLogs() {
         if (currentEventInfo != null) {
-            repository.getAnivIdolEventLogs(GetAnivIdolEventLogsParameter(92, idolId),
+            repository.getAnivIdolEventLogs(GetAnivIdolEventLogsParameter(currentEventInfo!!.id, idolId),
                 object : ResponseCallBack<List<EventLog>> {
                     override fun success(response: List<EventLog>) {
                         saveAnnviIdolData(response)
