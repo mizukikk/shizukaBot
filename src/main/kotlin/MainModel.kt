@@ -113,10 +113,12 @@ class MainModel {
             val para = GetEventLogsParameter(currentEventInfo!!.id, EventType.EVENT_POINT)
             repository.getEventLogs(para, object : ResponseCallBack<List<EventLog>> {
                 override fun success(response: List<EventLog>) {
-                    val embedBuilder = getBaseLogEmbedBuilder()
-                    setEventLogsMessage(response, embedBuilder)
-                    sendMessage(embedBuilder)
-                    checkAnnviLog()
+                    if (response.isNotEmpty()) {
+                        val embedBuilder = getBaseLogEmbedBuilder()
+                        setEventLogsMessage(response, embedBuilder)
+                        sendMessage(embedBuilder)
+                        checkAnnviLog()
+                    }
                 }
 
                 override fun fail() {}
