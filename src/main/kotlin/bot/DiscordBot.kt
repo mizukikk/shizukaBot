@@ -87,15 +87,15 @@ class DiscordBot private constructor() {
                 ACTION_ENABLE -> {
                     val channelList = ChannelUtil.getChannelList()
                     if (channelList.contains(event.channel.id)) {
-                        getInstance().sendMessage(event.channel.id, "此頻道已經設定過了")
+                        getInstance().sendMessage(event.channel.id, "${event.channel.name} 已經是活動紀錄頻道")
                     } else {
                         ChannelUtil.addChannel(event.channel.id)
-                        getInstance().sendMessage(event.channel.id, "頻道設定成功")
+                        getInstance().sendMessage(event.channel.id, "已將 ${event.channel.name} 設定為活動紀錄頻道")
                     }
                 }
                 ACTION_DISABLE -> {
                     ChannelUtil.deleteChannel(event.channel.id)
-                    getInstance().sendMessage(event.channel.id, "頻道移除成功")
+                    getInstance().sendMessage(event.channel.id, "已將 ${event.channel.name} 從活動紀錄頻道移除")
                 }
                 ACTION_EVENT -> {
                     listener?.showEventMessage(event.channel.id)
@@ -103,8 +103,8 @@ class DiscordBot private constructor() {
                 ACTION_INFO -> {
                     val embedBuilder = EmbedBuilder()
                     embedBuilder.setTitle("指令")
-                    embedBuilder.addField(ACTION_ENABLE, "設定紀錄活動資訊頻道", false)
-                    embedBuilder.addField(ACTION_DISABLE, "移除紀錄活動資訊頻道", false)
+                    embedBuilder.addField(ACTION_ENABLE, "將此頻道設定為活動紀錄頻道", false)
+                    embedBuilder.addField(ACTION_DISABLE, "將此頻道從活動紀錄頻道移除", false)
                     embedBuilder.addField(ACTION_EVENT, "查看當前活動資訊", false)
                     getInstance().sendMessage(event.channel.id, embedBuilder.build())
                 }
