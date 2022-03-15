@@ -33,8 +33,15 @@ class DiscordBot private constructor() {
     private var listener: DCBotListener? = null
 
     private val token by lazy {
-        File("shizuka_bot_file/botConfig.txt")
-            .readText()
+        try {
+            File("shizuka_bot_file/botConfig.txt")
+                .readText()
+        } catch (e: Exception) {
+            val file = File("shizuka_bot_file")
+            if (file.exists().not())
+                file.mkdir()
+            throw e
+        }
     }
 
     private var jda: JDA? = null
@@ -82,7 +89,7 @@ class DiscordBot private constructor() {
                 ACTION_DEBUG -> {
                     listener?.showDebugMessage(event.channel.id)
                 }
-                ACTION_UPDATE_NOW->
+                ACTION_UPDATE_NOW ->
                     listener?.updateNow()
                 ACTION_ENABLE -> {
                     val channelList = ChannelUtil.getChannelList()
