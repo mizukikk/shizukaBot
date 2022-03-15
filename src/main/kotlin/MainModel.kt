@@ -15,6 +15,7 @@ import extension.millisToDate
 import extension.nextUpdateMillis
 import net.dv8tion.jda.api.EmbedBuilder
 import repository.MLTDRepository
+import utils.ChannelUtil
 import java.awt.Color
 import java.io.File
 import java.text.NumberFormat
@@ -36,6 +37,13 @@ class MainModel {
 
     fun connectBot() {
         bot.connect()
+        bot.setListener(object : DiscordBot.DCBotListener {
+            override fun showEventMessage(chennelId: String) {
+                val embedBuilder = getBaseLogEmbedBuilder()
+                if (embedBuilder.isEmpty.not())
+                    bot.sendMessage(chennelId, embedBuilder.build())
+            }
+        })
     }
 
     fun scheduleTimerTask() {
@@ -83,7 +91,7 @@ class MainModel {
                 override fun success(response: List<EventLog>) {
                     val embedBuilder = getBaseLogEmbedBuilder()
                     setEventLogsMessage(response, embedBuilder)
-                    //todo aaa3 送出訊息到指定的聊天室
+                    sendMessage(embedBuilder)
                     checkAnnviLog()
                 }
 
@@ -107,7 +115,7 @@ class MainModel {
     private fun setEventLogsMessage(
         eventLogList: List<EventLog>,
         embedBuilder: EmbedBuilder,
-        name: String? = null
+        name: String? = null,
     ) {
         eventLogList.forEach { log ->
 
@@ -150,7 +158,7 @@ class MainModel {
     private fun setScoreRecordMessage(
         currentScore: Score,
         scoreList: List<Score>,
-        scoreSb: StringBuilder
+        scoreSb: StringBuilder,
     ) {
         var halfHourScore: Score? = null
         var oneHourScore: Score? = null
@@ -239,9 +247,14 @@ class MainModel {
 
                 }
 
-                //todo aaa3 送出訊息到指定的聊天室
-
+                sendMessage(embedBuilder)
             }
+        }
+    }
+
+    private fun sendMessage(embedBuilder: EmbedBuilder) {
+        ChannelUtil.getChannelList().forEach { channelId ->
+            bot.sendMessage(channelId, embedBuilder.build())
         }
     }
 }
