@@ -35,7 +35,7 @@ class DiscordBot private constructor() {
     private val token by lazy {
         try {
             File("shizuka_bot_file/botConfig.txt")
-                .readText()
+                .readText().replace("\n", "")
         } catch (e: Exception) {
             val file = File("shizuka_bot_file")
             if (file.exists().not())
