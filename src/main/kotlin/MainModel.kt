@@ -7,6 +7,7 @@ import api.parameter.GetAnivIdolEventLogsParameter
 import api.parameter.GetEventLogsParameter
 import bot.DiscordBot
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import data.AnnviIdolData
 import data.Idol
@@ -38,10 +39,33 @@ class MainModel {
     fun connectBot() {
         bot.connect()
         bot.setListener(object : DiscordBot.DCBotListener {
-            override fun showEventMessage(chennelId: String) {
+            override fun showEventMessage(channelId: String) {
                 val embedBuilder = getBaseLogEmbedBuilder()
                 if (embedBuilder.isEmpty.not())
-                    bot.sendMessage(chennelId, embedBuilder.build())
+                    bot.sendMessage(channelId, embedBuilder.build())
+            }
+
+            override fun showDebugMessage(channelId: String) {
+                val gson = GsonBuilder().setPrettyPrinting().create()
+                val embedBuilder = EmbedBuilder()
+                    .setTitle("測試訊息")
+                val channelList = ChannelUtil.getChannelList()
+                    .map { id ->
+                        bot.getChannelById(id)?.name
+                    }
+                val channel = gson.toJson(channelList)
+
+                embedBuilder.addField("使用中的頻道", channel, false)
+
+                currentEventInfo?.let {
+                    val event = gson.toJson(currentEventInfo)
+                    embedBuilder.addField("最新活動資訊", event, false)
+                }
+                bot.sendMessage(channelId, embedBuilder.build())
+            }
+
+            override fun updateNow() {
+                getEventInfo()
             }
         })
     }

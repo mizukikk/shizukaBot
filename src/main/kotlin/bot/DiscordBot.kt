@@ -19,6 +19,7 @@ class DiscordBot private constructor() {
         private const val ACTION_DISABLE = "disable"
         private const val ACTION_EVENT = "event"
         private const val ACTION_DEBUG = "debug"
+        private const val ACTION_UPDATE_NOW = "update_now"
 
         @Synchronized
         fun getInstance(): DiscordBot {
@@ -51,6 +52,8 @@ class DiscordBot private constructor() {
 
     fun getServiceList() = jda?.guilds
 
+    fun getChannelById(channelId: String) = jda?.getGuildChannelById(channelId)
+
     fun sendMessage(channelId: String, message: String) {
         jda?.getTextChannelById(channelId)
             ?.sendMessage(message)
@@ -76,7 +79,11 @@ class DiscordBot private constructor() {
 
             val action = splitList[1]
             when (action) {
-                ACTION_DEBUG -> {}
+                ACTION_DEBUG -> {
+                    listener?.showDebugMessage(event.channel.id)
+                }
+                ACTION_UPDATE_NOW->
+                    listener?.updateNow()
                 ACTION_ENABLE -> {
                     val channelList = ChannelUtil.getChannelList()
                     if (channelList.contains(event.channel.id)) {
@@ -98,6 +105,7 @@ class DiscordBot private constructor() {
                     embedBuilder.setTitle("指令")
                     embedBuilder.addField(ACTION_ENABLE, "設定紀錄活動資訊頻道", false)
                     embedBuilder.addField(ACTION_DISABLE, "移除紀錄活動資訊頻道", false)
+                    embedBuilder.addField(ACTION_EVENT, "查看當前活動資訊", false)
                     getInstance().sendMessage(event.channel.id, embedBuilder.build())
                 }
             }
@@ -109,6 +117,8 @@ class DiscordBot private constructor() {
     }
 
     interface DCBotListener {
-        fun showEventMessage(chennelId: String)
+        fun showEventMessage(channelId: String)
+        fun showDebugMessage(channelId: String)
+        fun updateNow()
     }
 }
