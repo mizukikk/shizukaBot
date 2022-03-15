@@ -38,7 +38,7 @@ class DiscordBot private constructor() {
         try {
             val json = File("shizuka_bot_file/botConfig.txt")
                 .readText()
-            Gson().fromJson<Token>(json,Token::class.java).token
+            Gson().fromJson<Token>(json, Token::class.java).token
         } catch (e: Exception) {
             val file = File("shizuka_bot_file")
             if (file.exists().not())
@@ -79,7 +79,12 @@ class DiscordBot private constructor() {
     private val commandAdapter = object : ListenerAdapter() {
         //取得訊息
         override fun onMessageReceived(event: MessageReceivedEvent) {
-            val splitList = event.message.contentRaw.split(" ")
+            val message = event.message.contentRaw
+            val splitList = message.split(" ")
+
+            if(message == "活動日期")
+                listener?.showEventMessage(event.channel.id)
+
             if (splitList.size != 2)
                 return
 
