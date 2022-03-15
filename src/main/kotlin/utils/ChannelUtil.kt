@@ -6,7 +6,7 @@ import java.io.File
 
 object ChannelUtil {
 
-    private const val CHANNELS = "channels.txt"
+    private const val CHANNELS = "shizuka_bot_file/channels.txt"
     private val gson by lazy {
         Gson()
     }

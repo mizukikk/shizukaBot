@@ -33,7 +33,7 @@ class DiscordBot private constructor() {
     private var listener: DCBotListener? = null
 
     private val token by lazy {
-        File("botConfig.txt")
+        File("shizuka_bot_file/botConfig.txt")
             .readText()
     }
 

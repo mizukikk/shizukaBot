@@ -28,7 +28,7 @@ class MainModel {
     private val bot: DiscordBot = DiscordBot.getInstance()
     private var annviIdolLogMap = hashMapOf<Int, MutableList<AnnviIdolData>>()
     private val idolMap by lazy {
-        val json = File("idloList.txt")
+        val json = File("shizuka_bot_file/idloList.txt")
             .readText()
         Gson().fromJson<Map<Int, Idol>>(json, object : TypeToken<Map<Int, Idol>>() {}.type)
     }
