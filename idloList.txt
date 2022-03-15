@@ -1,54 +1,54 @@
 {
   "1": {
-    "idolType": 1,
+    "idolType": 0,
     "name": "天海春香"
   },
   "2": {
-    "idolType": 2,
+    "idolType": 0,
     "name": "如月千早"
   },
   "3": {
-    "idolType": 3,
+    "idolType": 0,
     "name": "星井美希"
   },
   "4": {
-    "idolType": 1,
+    "idolType": 0,
     "name": "萩原雪歩"
   },
   "5": {
-    "idolType": 3,
+    "idolType": 0,
     "name": "高槻やよい"
   },
   "6": {
-    "idolType": 1,
+    "idolType": 0,
     "name": "菊地真"
   },
   "7": {
-    "idolType": 2,
+    "idolType": 0,
     "name": "水瀬伊織"
   },
   "8": {
-    "idolType": 2,
+    "idolType": 0,
     "name": "四条貴音"
   },
   "9": {
-    "idolType": 2,
+    "idolType": 0,
     "name": "秋月律子"
   },
   "10": {
-    "idolType": 3,
+    "idolType": 0,
     "name": "三浦あずさ"
   },
   "11": {
-    "idolType": 3,
+    "idolType": 0,
     "name": "双海亜美"
   },
   "12": {
-    "idolType": 3,
+    "idolType": 0,
     "name": "双海真美"
   },
   "13": {
-    "idolType": 1,
+    "idolType": 0,
     "name": "我那覇響"
   },
   "14": {

@@ -8,12 +8,14 @@ import api.parameter.GetEventLogsParameter
 import bot.DiscordBot
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import data.AnnviIdolData
 import data.Idol
 import extension.dateToMillis
 import extension.millisToDate
 import extension.nextUpdateMillis
 import net.dv8tion.jda.api.EmbedBuilder
 import repository.MLTDRepository
+import java.awt.Color
 import java.io.File
 import java.text.NumberFormat
 import java.util.*
@@ -22,6 +24,7 @@ import java.util.concurrent.TimeUnit
 class MainModel {
     private val repository = MLTDRepository.getInstance()
     private val bot: DiscordBot = DiscordBot.getInstance()
+    private var annviIdolLogMap = hashMapOf<Int, MutableList<AnnviIdolData>>()
     private val idolMap by lazy {
         val json = File("idloList.txt")
             .readText()
@@ -81,15 +84,19 @@ class MainModel {
                     val embedBuilder = getBaseLogEmbedBuilder()
                     setEventLogsMessage(response, embedBuilder)
                     //todo aaa3 送出訊息到指定的聊天室
-
-                    if (currentEventInfo!!.isAnniversaryEvent) {
-                        idolId = 1
-                        getAnnivLogs()
-                    }
+                    checkAnnviLog()
                 }
 
                 override fun fail() {}
             })
+        }
+    }
+
+    private fun checkAnnviLog() {
+        if (currentEventInfo!!.isAnniversaryEvent) {
+            idolId = 1
+            annviIdolLogMap.clear()
+            getAnnivLogs()
         }
     }
 
@@ -99,85 +106,142 @@ class MainModel {
 
     private fun setEventLogsMessage(
         eventLogList: List<EventLog>,
-        embedBuilder: EmbedBuilder
+        embedBuilder: EmbedBuilder,
+        name: String? = null
     ) {
         eventLogList.forEach { log ->
+
             val scoreList = log.data.reversed()
             //取得當前分數
             val currentScore = try {
                 scoreList.first()
             } catch (e: NoSuchElementException) {
-                null
+                return@forEach
             }
 
-            if (currentScore == null)
-                return@forEach
+            val scoreSb = StringBuilder()
+            scoreSb.append(NumberFormat.getInstance().format(currentScore.score.toInt()))
 
             val updateTime = currentScore.summaryTime
                 .dateToMillis()
                 .millisToDate("yyyy-MM-dd HH:mm XXX")
-
             embedBuilder.setFooter("資料更新時間 $updateTime")
 
-            var halfHourScore: Score? = null
-            var oneHourScore: Score? = null
-            var oneDayScore: Score? = null
+            setScoreRecordMessage(currentScore, scoreList, scoreSb)
 
-            val currentScoreMillis = currentScore.summaryTime.dateToMillis()
-
-            for (score: Score in scoreList) {
-                val diffMillis = currentScoreMillis - score.summaryTime.dateToMillis()
-
-                if (diffMillis >= TimeUnit.MINUTES.toMillis(30) && halfHourScore == null)
-                    halfHourScore = score
-
-                if (diffMillis >= TimeUnit.HOURS.toMillis(1) && oneHourScore == null)
-                    oneHourScore = score
-
-                if (diffMillis >= TimeUnit.DAYS.toMillis(1) && oneDayScore == null)
-                    oneDayScore = score
-
-                if (halfHourScore != null && oneHourScore != null && oneDayScore != null)
-                    break
-            }
-
-
-            val scoreSb = StringBuilder()
-            currentScore.let {
-                scoreSb.append(NumberFormat.getInstance().format(it.score.toInt()))
-            }
-            halfHourScore?.let {
-                val score = currentScore.score.toInt() - it.score.toInt()
-                scoreSb.append("\n+${NumberFormat.getInstance().format(score)} (30min)")
-            }
-            oneHourScore?.let {
-                val score = currentScore.score.toInt() - it.score.toInt()
-                scoreSb.append("\n+${NumberFormat.getInstance().format(score)} (1hr)")
-            }
-            oneDayScore?.let {
-                val score = currentScore.score.toInt() - it.score.toInt()
-                scoreSb.append("\n+${NumberFormat.getInstance().format(score)} (24hr)")
-            }
-            if (scoreSb.isNotEmpty())
+            if (name != null) {
+                embedBuilder
+                    .addField(
+                        name,
+                        scoreSb.toString(),
+                        true
+                    )
+            } else {
                 embedBuilder
                     .addField(
                         "${log.rank}",
                         scoreSb.toString(),
                         true
                     )
+            }
+        }
+    }
+
+    private fun setScoreRecordMessage(
+        currentScore: Score,
+        scoreList: List<Score>,
+        scoreSb: StringBuilder
+    ) {
+        var halfHourScore: Score? = null
+        var oneHourScore: Score? = null
+        var oneDayScore: Score? = null
+
+        val currentScoreMillis = currentScore.summaryTime.dateToMillis()
+
+        for (score: Score in scoreList) {
+            val diffMillis = currentScoreMillis - score.summaryTime.dateToMillis()
+
+            if (diffMillis >= TimeUnit.MINUTES.toMillis(30) && halfHourScore == null)
+                halfHourScore = score
+
+            if (diffMillis >= TimeUnit.HOURS.toMillis(1) && oneHourScore == null)
+                oneHourScore = score
+
+            if (diffMillis >= TimeUnit.DAYS.toMillis(1) && oneDayScore == null)
+                oneDayScore = score
+
+            if (halfHourScore != null && oneHourScore != null && oneDayScore != null)
+                break
+        }
+
+        halfHourScore?.let {
+            val score = currentScore.score.toInt() - it.score.toInt()
+            scoreSb.append("\n+${NumberFormat.getInstance().format(score)} (30min)")
+        }
+        oneHourScore?.let {
+            val score = currentScore.score.toInt() - it.score.toInt()
+            scoreSb.append("\n+${NumberFormat.getInstance().format(score)} (1hr)")
+        }
+        oneDayScore?.let {
+            val score = currentScore.score.toInt() - it.score.toInt()
+            scoreSb.append("\n+${NumberFormat.getInstance().format(score)} (24hr)")
         }
     }
 
     private fun getAnnivLogs() {
         if (currentEventInfo != null) {
-            repository.getAnivIdolEventLogs(GetAnivIdolEventLogsParameter(currentEventInfo!!.id, idolId),
+            repository.getAnivIdolEventLogs(GetAnivIdolEventLogsParameter(92, idolId),
                 object : ResponseCallBack<List<EventLog>> {
                     override fun success(response: List<EventLog>) {
-
+                        saveAnnviIdolData(response)
+                        loadNextAnnivLogs()
                     }
 
-                    override fun fail() {}
+                    override fun fail() {
+                        loadNextAnnivLogs()
+                    }
                 })
+        }
+    }
+
+    private fun saveAnnviIdolData(response: List<EventLog>) {
+        val idol = idolMap[idolId]
+        idol?.let {
+            val data = AnnviIdolData(it.name, response.reversed())
+            if (annviIdolLogMap[it.idolType] == null) {
+                annviIdolLogMap[it.idolType] = mutableListOf()
+            }
+            annviIdolLogMap[it.idolType]?.add(data)
+        }
+    }
+
+    private fun loadNextAnnivLogs() {
+        idolId++
+        if (idolId <= 52) {
+            Thread.sleep(1000)
+            getAnnivLogs()
+        } else {
+            annviIdolLogMap.forEach { idolType, annivIdolDataList ->
+                val embedBuilder = getBaseLogEmbedBuilder()
+
+                val messageColor = when (idolType) {
+                    Idol.IdolType.AS -> Color.WHITE
+                    Idol.IdolType.PRINCESS -> Color(235, 64, 131)
+                    Idol.IdolType.ANGEL -> Color(215, 164, 57)
+                    Idol.IdolType.FAIRY -> Color(25, 87, 213)
+                    else -> Color.WHITE
+                }
+                embedBuilder.setColor(messageColor)
+
+                annivIdolDataList.forEach { annviIdolData ->
+                    val eventLogList = annviIdolData.eventLogList
+                    setEventLogsMessage(eventLogList, embedBuilder, annviIdolData.name)
+
+                }
+
+                //todo aaa3 送出訊息到指定的聊天室
+
+            }
         }
     }
 }

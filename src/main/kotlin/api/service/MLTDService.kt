@@ -24,7 +24,7 @@ interface MLTDService {
         @Query("prettyPrint") prettyPrint: Boolean = false
     ): Call<List<EventLog>>
 
-    @GET("events/{id}/rankings/logs/idolPoint/{idolId}/10,100,1000")
+    @GET("events/{id}/rankings/logs/idolPoint/{idolId}/100")
     fun getAnivIdolEventLogs(
         @Path("id") id: Int,
         @Path("idolId") idolId: Int,

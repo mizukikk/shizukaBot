@@ -8,4 +8,11 @@ data class Idol(
     val idolType: Int,
     @SerializedName("name")
     val name: String
-)
+){
+    object IdolType{
+        const val AS = 0
+        const val PRINCESS = 1
+        const val FAIRY = 2
+        const val ANGEL = 3
+    }
+}
