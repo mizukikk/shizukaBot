@@ -4,6 +4,7 @@ package api.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import extension.dateToMillis
+import java.util.concurrent.TimeUnit
 
 data class Schedule(
     @Expose
@@ -25,5 +26,5 @@ data class Schedule(
     @SerializedName("pageEndDate")
     val pageEndDate: String
 ) {
-    val endDateMillis get() = endDate.dateToMillis()
+    val effectiveDateMillis get() = endDate.dateToMillis() + TimeUnit.HOURS.toMillis(2)
 }
