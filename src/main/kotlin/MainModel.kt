@@ -86,7 +86,7 @@ class MainModel {
     }
 
     private fun isEventEffective(): Boolean {
-        val effectiveMillis = currentEventInfo!!.schedule.effectiveDateMillis
+        val effectiveMillis = currentEventInfo?.schedule?.effectiveDateMillis ?: return false
         return currentEventInfo != null && effectiveMillis >= System.currentTimeMillis()
     }
 
