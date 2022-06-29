@@ -75,6 +75,7 @@ class MainModel {
         val currentMillis = System.currentTimeMillis()
         val nextUpdateMillis = System.currentTimeMillis().nextUpdateMillis()
         val delay = nextUpdateMillis - currentMillis
+        println("${delay/1000} 秒後更新資訊")
         timer.schedule(object : TimerTask() {
             override fun run() {
                 if (isEventEffective()) {
