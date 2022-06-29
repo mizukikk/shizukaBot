@@ -61,6 +61,7 @@ class MainModel {
                     val event = gson.toJson(currentEventInfo)
                     embedBuilder.addField("最新活動資訊", event, false)
                 }
+                embedBuilder.addField("下次更新時間","${System.currentTimeMillis().nextUpdateMillis()}",false)
                 bot.sendMessage(channelId, embedBuilder.build())
             }
 
