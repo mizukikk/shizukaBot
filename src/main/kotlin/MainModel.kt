@@ -140,8 +140,7 @@ class MainModel {
 
     private fun setEventLogsMessage(
         eventLogList: List<EventLog>,
-        embedBuilder: EmbedBuilder,
-        name: String? = null,
+        embedBuilder: EmbedBuilder
     ) {
         eventLogList.forEach { log ->
 
@@ -163,22 +162,48 @@ class MainModel {
 
             setScoreRecordMessage(currentScore, scoreList, scoreSb)
 
-            if (name != null) {
-                embedBuilder
-                    .addField(
-                        name,
-                        scoreSb.toString(),
-                        true
-                    )
-            } else {
-                embedBuilder
-                    .addField(
-                        "${log.rank}",
-                        scoreSb.toString(),
-                        true
-                    )
-            }
+
+            embedBuilder
+                .addField(
+                    "${log.rank}位",
+                    scoreSb.toString(),
+                    true
+                )
         }
+    }
+
+    private fun setAnnivLogsMessage(
+        eventLogList: List<EventLog>,
+        embedBuilder: EmbedBuilder,
+        name: String
+    ) {
+        val scoreSb = StringBuilder()
+
+        eventLogList.forEach { log ->
+
+            val scoreList = log.data.reversed()
+            //取得當前分數
+            val currentScore = try {
+                scoreList.first()
+            } catch (e: NoSuchElementException) {
+                return@forEach
+            }
+            scoreSb.append("\n${log.rank}位\n")
+            scoreSb.append(NumberFormat.getInstance().format(currentScore.score.toInt()))
+
+            val updateTime = currentScore.summaryTime
+                .dateToMillis()
+                .millisToDate("yyyy-MM-dd HH:mm XXX")
+            embedBuilder.setFooter("資料更新時間 $updateTime")
+
+            setScoreRecordMessage(currentScore, scoreList, scoreSb)
+        }
+        embedBuilder
+            .addField(
+                name,
+                scoreSb.toString(),
+                true
+            )
     }
 
     private fun setScoreRecordMessage(
@@ -269,8 +294,7 @@ class MainModel {
 
                 annivIdolDataList.forEach { annviIdolData ->
                     val eventLogList = annviIdolData.eventLogList
-                    setEventLogsMessage(eventLogList, embedBuilder, annviIdolData.name)
-
+                    setAnnivLogsMessage(eventLogList.sortedBy { it.rank }, embedBuilder, annviIdolData.name)
                 }
 
                 sendMessage(embedBuilder)
