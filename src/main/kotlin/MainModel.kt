@@ -281,7 +281,8 @@ class MainModel {
             getAnnivLogs()
         } else {
             annviIdolLogMap.forEach { idolType, annivIdolDataList ->
-                val embedBuilder = getBaseLogEmbedBuilder()
+                val embedBuilder = EmbedBuilder()
+                    .setTitle(currentEventInfo?.name)
 
                 val messageColor = when (idolType) {
                     Idol.IdolType.AS -> Color.WHITE
